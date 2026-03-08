@@ -1,6 +1,6 @@
 {
   "name": "globaly-i18n",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Lightweight internationalization (i18n) library for JavaScript and TypeScript applications",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
