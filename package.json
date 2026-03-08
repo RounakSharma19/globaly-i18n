@@ -1,12 +1,21 @@
 {
   "name": "globaly-i18n",
   "version": "1.0.2",
+  "description": "Lightweight internationalization (i18n) library for JavaScript and TypeScript applications",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RounakSharma19/globaly-i18n.git"
+  },
+  "homepage": "https://github.com/RounakSharma19/globaly-i18n",
+  "bugs": {
+    "url": "https://github.com/RounakSharma19/globaly-i18n/issues"
+  },
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "test": "vitest"
@@ -65,7 +74,6 @@
   ],
   "author": "Rounak Sharma",
   "license": "MIT",
-  "description": "",
   "devDependencies": {
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
