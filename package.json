@@ -17,7 +17,7 @@
     "url": "https://github.com/RounakSharma19/globaly-i18n/issues"
   },
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "build": "tsup src/index.ts --format esm,cjs",
     "test": "vitest"
   },
   "keywords": [
@@ -79,7 +79,5 @@
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   },
-  "dependencies": {
-    "messageformat": "^4.0.0"
-  }
+  "dependencies": {}
 }

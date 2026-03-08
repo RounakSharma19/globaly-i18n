@@ -3,11 +3,8 @@ import { getNested } from "../utils/nested";
 import { interpolate } from "../utils/interpolate";
 import { resolvePlural } from "../plural/pluralRules";
 import { detectLanguage } from "../detection/detectLanguage";
-import MessageFormat from "messageformat";
 import { I18nConfig } from "../types";
 import { NestedKeys } from "../types/nestedKeys";
-
-const mf = new MessageFormat();
 
 export class I18n<T extends Record<string, any> = any> {
   private currentLang: string;
@@ -36,7 +33,9 @@ export class I18n<T extends Record<string, any> = any> {
     } else {
       const data = await this.config.loader(lang);
 
-      this.translations[lang] = data;
+      this.translations[lang] = {
+        default: data,
+      };
     }
 
     this.currentLang = lang;
@@ -80,7 +79,6 @@ export class I18n<T extends Record<string, any> = any> {
 
     if (!value) {
       console.warn(`[globaly-i18n] Missing translation: ${keyStr}`);
-
       return keyStr;
     }
 
@@ -88,14 +86,10 @@ export class I18n<T extends Record<string, any> = any> {
       value = resolvePlural(value, vars.count, this.currentLang);
     }
 
-    if (typeof value === "string" && value.includes("{")) {
-      try {
-        const fn = mf.compile(value);
-
-        return fn(vars);
-      } catch {}
+    if (typeof value === "string") {
+      return interpolate(value, vars);
     }
 
-    return interpolate(value, vars);
+    return value;
   }
 }
