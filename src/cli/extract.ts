@@ -1,24 +1,51 @@
+#!/usr/bin/env node
+
 import fs from "fs";
 import path from "path";
 
-export function extractKeys(dir: string) {
-  const files = fs.readdirSync(dir);
+const targetDir = process.argv[2];
 
-  const keys = new Set<string>();
+if (!targetDir) {
+  console.log("Usage: globaly-i18n <source-folder>");
+  process.exit(1);
+}
+
+const keys = new Set<string>();
+
+function scanDir(dir: string) {
+  const files = fs.readdirSync(dir);
 
   for (const file of files) {
     const filePath = path.join(dir, file);
+    const stat = fs.statSync(filePath);
+
+    if (stat.isDirectory()) {
+      scanDir(filePath);
+      continue;
+    }
+
+    if (!file.match(/\.(js|ts|tsx|jsx)$/)) continue;
 
     const content = fs.readFileSync(filePath, "utf8");
 
-    const regex = /t\(["'`](.*?)["'`]\)/g;
+    const regex = /\bt\s*\(\s*["'`]([^"'`]+)["'`]\s*\)/g;
 
     let match;
 
     while ((match = regex.exec(content))) {
-      keys.add(match[1]);
+      const key = match[1];
+
+      if (!key) continue;
+
+      keys.add(key);
     }
   }
-
-  return Array.from(keys);
 }
+
+scanDir(targetDir);
+
+console.log("\nExtracted translation keys:\n");
+
+keys.forEach((k) => console.log(k));
+
+console.log(`\nTotal keys: ${keys.size}`);

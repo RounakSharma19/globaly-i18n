@@ -3,11 +3,17 @@
     "target": "ES2019",
     "module": "ESNext",
     "moduleResolution": "Node",
+
     "declaration": true,
-    "outDir": "dist",
+
     "strict": true,
+    "skipLibCheck": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+
+    "jsx": "react-jsx",
+
+    "resolveJsonModule": true
   },
+
   "include": ["src"]
 }

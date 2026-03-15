@@ -1,6 +1,6 @@
 {
   "name": "globaly-i18n",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Lightweight internationalization (i18n) library for JavaScript and TypeScript applications",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -8,6 +8,7 @@
   "files": [
     "dist"
   ],
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/RounakSharma19/globaly-i18n.git"
@@ -16,8 +17,13 @@
   "bugs": {
     "url": "https://github.com/RounakSharma19/globaly-i18n/issues"
   },
+  "bin": {
+    "globaly-i18n": "dist/extract.js",
+    "globaly-i18n-translate": "dist/translate.js"
+  },
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs",
+    "build": "tsup src/index.ts --format esm,cjs --minify --clean && tsup src/cli/extract.ts src/cli/translate.ts --format esm,cjs --minify",
+    "dev": "tsup src/index.ts --watch",
     "test": "vitest"
   },
   "keywords": [
@@ -36,48 +42,28 @@
     "language-switching",
     "translation-library",
     "localization-library",
-    "javascript-translation",
-    "typescript-translation",
     "i18n-library",
-    "translation-engine",
-    "localization-engine",
-    "translation-system",
     "multi-language",
-    "multi-language-support",
-    "internationalization-library",
-    "translation-management",
-    "globalization",
-    "web-localization",
-    "frontend-localization",
-    "backend-localization",
-    "language-detection",
-    "translation-loader",
-    "dynamic-language-loading",
-    "nested-translations",
     "pluralization",
-    "icu-plural-rules",
     "interpolation",
-    "translation-interpolation",
     "ssr-i18n",
     "framework-agnostic",
     "react-i18n",
-    "vue-i18n",
-    "angular-i18n",
-    "node-translation",
-    "typescript-library",
-    "javascript-library",
-    "open-source-i18n",
     "translation-tool",
-    "globalization-library",
-    "translation-utils",
-    "i18n-toolkit"
+    "globalization-library"
   ],
   "author": "Rounak Sharma",
   "license": "MIT",
+  "peerDependencies": {
+    "react": "^19.2.4"
+  },
+  "dependencies": {
+    "axios": "^1.13.6"
+  },
   "devDependencies": {
+    "@types/react": "^18.3.28",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
-  },
-  "dependencies": {}
+  }
 }

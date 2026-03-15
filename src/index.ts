@@ -12,3 +12,8 @@ export async function createI18n(config: I18nConfig) {
 
 export { I18n };
 export { i18nMiddleware };
+
+export { createGlobalyI18n } from "./createGlobalyI18n";
+
+export { I18nProvider } from "./react/provider";
+export { useTranslation } from "./react/useTranslation";

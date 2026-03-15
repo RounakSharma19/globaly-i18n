@@ -33,9 +33,7 @@ export class I18n<T extends Record<string, any> = any> {
     } else {
       const data = await this.config.loader(lang);
 
-      this.translations[lang] = {
-        default: data,
-      };
+      this.translations[lang] = { default: data };
     }
 
     this.currentLang = lang;
@@ -78,7 +76,9 @@ export class I18n<T extends Record<string, any> = any> {
     }
 
     if (!value) {
-      console.warn(`[globaly-i18n] Missing translation: ${keyStr}`);
+      console.warn(
+        `[globaly-i18n] Missing translation: ${namespace}:${keyStr}`,
+      );
       return keyStr;
     }
 
