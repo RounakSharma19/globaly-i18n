@@ -7,8 +7,8 @@ export async function createGlobalyI18n(config: any) {
   const i18n = await createI18n(config);
 
   if (config.debug) {
-    console.log(`[globaly-i18n] running in ${env}`);
+    console.log(`[globaly-i18n] environment → ${env}`);
+    console.log(`[globaly-i18n] language → ${i18n.getLanguage()}`);
   }
-
   return i18n;
 }

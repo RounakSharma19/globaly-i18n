@@ -31,7 +31,11 @@ const translations: Record<string, any> = {
 };
 
 const loader = async (lang: string, ns?: string) => {
-  return translations[lang][ns || "common"];
+  const language = translations[lang];
+
+  if (!language) return {};
+
+  return language[ns || "common"] || {};
 };
 
 describe("globaly-i18n", () => {
@@ -95,4 +99,15 @@ describe("globaly-i18n", () => {
 
     expect(result).toBe("Welcome Rounak");
   });
+  it("changes language correctly", async () => {
+  const i18n = await createI18n({
+    defaultLang: "en",
+    namespaces: ["common"],
+    loader
+  });
+
+  await i18n.setLanguage("de");
+
+  expect(i18n.getLanguage()).toBe("de");
+});
 });

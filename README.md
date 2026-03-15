@@ -1,8 +1,8 @@
 # globaly-i18n
 
-Lightweight **internationalization (i18n) and translation library for JavaScript and TypeScript** with support for **namespaces, ICU MessageFormat, middleware, language detection, CLI key extraction, and type-safe translations**.
+Lightweight **internationalization (i18n) and translation library for JavaScript and TypeScript** with support for **namespaces, lazy loading, caching, middleware, language detection, CLI tools, and type-safe translations**.
 
-Designed to work seamlessly in **frontend and backend applications**, including Node.js, React, Vue, Next.js, Express, and NestJS.
+Designed to work seamlessly in **frontend and backend applications**, including **Node.js, React, Vue, Next.js, Express, and NestJS**.
 
 ![npm version](https://img.shields.io/npm/v/globaly-i18n)
 ![weekly downloads](https://img.shields.io/npm/dw/globaly-i18n)
@@ -15,19 +15,24 @@ Designed to work seamlessly in **frontend and backend applications**, including 
 
 # ✨ Features
 
-- 🌍 Dynamic language loading
-- 🗂 Namespace-based translations
-- 🔑 Nested translation keys
-- 🔢 ICU MessageFormat support
-- 🔄 Variable interpolation
-- 🔁 Fallback language support
-- 🌐 Language switching
-- 🧠 Language detection (browser / headers / query)
-- 🧩 Express & NestJS middleware support
-- ⚡ Lightweight and fast
-- 🧠 TypeScript autocomplete for translation keys
-- 🛠 CLI key extraction tool
-- 🖥 Works in Node.js, React, Vue, Next.js, and other frameworks
+* 🌍 Dynamic language loading
+* 🗂 Namespace-based translations
+* 🔑 Nested translation keys
+* 🔢 Pluralization support
+* 🔄 Variable interpolation
+* 🔁 Fallback language support
+* 🌐 Language switching
+* 🧠 Language detection (browser / headers / query / localStorage)
+* 💾 Language persistence
+* ⚡ Translation caching for performance
+* 📦 Lazy namespace loading
+* ⚛ React hook support
+* 🧩 Express & NestJS middleware support
+* 🧠 TypeScript autocomplete for translation keys
+* 🛠 CLI translation key extraction
+* 🌐 CLI translation generator
+* ⚡ Lightweight and fast
+* 🖥 Works in Node.js, React, Vue, Next.js and other frameworks
 
 ---
 
@@ -68,7 +73,7 @@ const i18n = await createI18n({
 console.log(i18n.t("common:home.title", { name: "Rounak" }));
 ```
 
-Output:
+Output
 
 ```
 Welcome Rounak
@@ -121,7 +126,7 @@ await i18n.setLanguage("de");
 console.log(i18n.t("common:home.title", { name: "Rounak" }));
 ```
 
-Output:
+Output
 
 ```
 Willkommen Rounak
@@ -129,28 +134,13 @@ Willkommen Rounak
 
 ---
 
-# 🔢 Pluralization (ICU Support)
-
-Translation file:
-
-```json
-{
-  "cart": {
-    "items": {
-      "one": "You have {count} item",
-      "other": "You have {count} items"
-    }
-  }
-}
-```
-
-Usage:
+# 🔢 Pluralization
 
 ```javascript
 i18n.t("common:cart.items", { count: 5 });
 ```
 
-Output:
+Output
 
 ```
 You have 5 items
@@ -162,11 +152,11 @@ You have 5 items
 
 ```javascript
 i18n.t("common:home.title", {
-  name: "Rounak",
+  name: "Rounak"
 });
 ```
 
-Output:
+Output
 
 ```
 Welcome Rounak
@@ -174,13 +164,56 @@ Welcome Rounak
 
 ---
 
+# 📦 Lazy Namespace Loading
+
+For large applications you can load namespaces only when needed.
+
+```javascript
+await i18n.loadNamespace("dashboard");
+
+console.log(i18n.t("dashboard:stats.users"));
+```
+
+This keeps the initial bundle small and improves performance.
+
+---
+
+# ⚡ Translation Caching
+
+`globaly-i18n` automatically caches translations internally.
+
+Repeated calls like:
+
+```javascript
+i18n.t("common:home.title");
+```
+
+are served from cache for better performance.
+
+---
+
+# 💾 Language Persistence
+
+Selected language is automatically saved to **localStorage**.
+
+```javascript
+await i18n.setLanguage("de");
+```
+
+After page reload, the language remains active.
+
+---
+
 # 🧠 Language Detection
 
-Automatically detect language from:
+Languages can be detected automatically from:
 
-- Browser settings
-- HTTP `Accept-Language` header
-- Query parameters (`?lang=de`)
+* Browser settings
+* HTTP `Accept-Language` header
+* Query parameters (`?lang=de`)
+* localStorage
+
+Example
 
 ```javascript
 const i18n = await createI18n({
@@ -188,15 +221,46 @@ const i18n = await createI18n({
   detectLanguage: true,
   namespaces: ["common"],
   loader: (lang, ns) =>
-    import(`./locales/${lang}/${ns}.json`).then((m) => m.default),
+    import(`./locales/${lang}/${ns}.json`).then((m) => m.default)
 });
 ```
 
 ---
 
-# 🧩 Middleware (Express / NestJS)
+# ⚛ React Integration
 
-You can integrate `globaly-i18n` with backend frameworks.
+Wrap your application with the provider.
+
+```javascript
+import { I18nProvider } from "globaly-i18n/react";
+
+<I18nProvider i18n={i18n}>
+  <App />
+</I18nProvider>
+```
+
+Use translations inside components.
+
+```javascript
+import { useTranslation } from "globaly-i18n/react";
+
+function Home() {
+  const { t, setLanguage } = useTranslation();
+
+  return (
+    <>
+      <h1>{t("common:home.title")}</h1>
+      <button onClick={() => setLanguage("de")}>
+        Switch Language
+      </button>
+    </>
+  );
+}
+```
+
+---
+
+# 🧩 Middleware (Express / NestJS)
 
 ```javascript
 import express from "express";
@@ -208,7 +272,7 @@ const i18n = await createI18n({
   defaultLang: "en",
   namespaces: ["common"],
   loader: (lang, ns) =>
-    import(`./locales/${lang}/${ns}.json`).then((m) => m.default),
+    import(`./locales/${lang}/${ns}.json`).then((m) => m.default)
 });
 
 app.use(i18nMiddleware(i18n));
@@ -224,37 +288,51 @@ app.listen(3000);
 
 # 🛠 CLI Translation Key Extraction
 
-`globaly-i18n` includes a CLI tool that extracts translation keys from your code.
+Scan your project and extract translation keys.
 
-Example:
+Example source code
 
 ```javascript
 t("common:home.title");
 t("auth:login.button");
 ```
 
-Run the extractor:
+Run
 
 ```bash
 npx globaly-i18n extract src
 ```
 
-It will detect translation keys used in your project.
+---
+
+# 🌐 CLI Translation Generator
+
+Automatically generate translated files.
+
+```bash
+npx globaly-i18n translate --from en --to de,fr,es
+```
+
+Example output
+
+```
+locales
+ ├ en
+ ├ de
+ ├ fr
+ └ es
+```
 
 ---
 
 # 🧠 TypeScript Support
 
-`globaly-i18n` supports **type-safe translation keys**.
-
-Example:
+`globaly-i18n` provides **type-safe translation keys**.
 
 ```ts
-i18n.t("common:home.title"); // ✅ valid
-i18n.t("common:home.titel"); // ❌ TypeScript error
+i18n.t("common:home.title"); // valid
+i18n.t("common:home.titel"); // TypeScript error
 ```
-
-This helps prevent runtime translation errors.
 
 ---
 
@@ -264,45 +342,25 @@ This helps prevent runtime translation errors.
 
 Creates a new i18n instance.
 
-### Options
-
-| Option         | Type     | Description                              |
-| -------------- | -------- | ---------------------------------------- |
-| defaultLang    | string   | Default language                         |
-| fallbackLang   | string   | Fallback language if translation missing |
-| namespaces     | string[] | Translation namespaces                   |
-| detectLanguage | boolean  | Enable automatic language detection      |
-| loader         | function | Function to load translation files       |
-
-Example:
-
-```javascript
-const i18n = await createI18n({
-  defaultLang: "en",
-  fallbackLang: "en",
-  namespaces: ["common"],
-  loader: (lang, ns) =>
-    import(`./locales/${lang}/${ns}.json`).then((m) => m.default),
-});
-```
+| Option         | Type     | Description                        |
+| -------------- | -------- | ---------------------------------- |
+| defaultLang    | string   | Default language                   |
+| fallbackLang   | string   | Fallback language                  |
+| namespaces     | string[] | Translation namespaces             |
+| detectLanguage | boolean  | Enable language detection          |
+| loader         | function | Function used to load translations |
 
 ---
 
 ## t(key, options)
 
-Translate a key.
-
 ```javascript
-i18n.t("common:home.title", {
-  name: "Rounak",
-});
+i18n.t("common:home.title", { name: "Rounak" });
 ```
 
 ---
 
 ## setLanguage(lang)
-
-Switch the active language.
 
 ```javascript
 await i18n.setLanguage("de");
@@ -312,41 +370,103 @@ await i18n.setLanguage("de");
 
 ## getLanguage()
 
-Returns the currently active language.
-
 ```javascript
 i18n.getLanguage();
 ```
 
 ---
 
-# 🧠 Why globaly-i18n?
+## loadNamespace(namespace)
 
-Many i18n libraries are either:
+```javascript
+await i18n.loadNamespace("dashboard");
+```
 
-- heavy
-- complex
-- framework-specific
+---
 
-**globaly-i18n** focuses on being:
+# 📚 Examples
 
-- ⚡ lightweight
-- 🧩 framework-agnostic
-- 🧠 TypeScript friendly
-- 🚀 easy to integrate
-- 🔧 flexible for both frontend and backend
+### Node.js Example
+
+```javascript
+import { createI18n } from "globaly-i18n";
+
+const i18n = await createI18n({
+  defaultLang: "en",
+  namespaces: ["common"],
+  loader: (lang, ns) =>
+    import(`./locales/${lang}/${ns}.json`).then((m) => m.default)
+});
+
+console.log(i18n.t("common:home.title"));
+```
+
+### React Example
+
+```javascript
+import { useTranslation } from "globaly-i18n/react";
+
+function Example() {
+  const { t } = useTranslation();
+
+  return <h1>{t("common:home.title")}</h1>;
+}
+```
+
+### Express Example
+
+```javascript
+app.get("/", (req, res) => {
+  res.send(req.t("common:home.title"));
+});
+```
+
+---
+---
+
+# ⚖ Comparison with Other i18n Libraries
+
+| Feature                     | globaly-i18n | i18next        | react-intl |
+| --------------------------- | ------------ | -------------- | ---------- |
+| Lightweight                 | ✅            | ❌              | ❌          |
+| TypeScript Key Autocomplete | ✅            | ⚠ Partial      | ❌          |
+| Namespace Support           | ✅            | ✅              | ❌          |
+| Lazy Namespace Loading      | ✅            | ⚠ Plugin       | ❌          |
+| Built-in Caching            | ✅            | ❌              | ❌          |
+| Language Detection          | ✅            | ⚠ Plugin       | ❌          |
+| CLI Key Extraction          | ✅            | ❌              | ❌          |
+| CLI Auto Translation        | ✅            | ❌              | ❌          |
+| React Integration           | ✅            | ✅              | ✅          |
+| Express / Node Middleware   | ✅            | ⚠ Plugin       | ❌          |
+| Framework Agnostic          | ✅            | ⚠ Mostly React | ❌          |
+
+### Why use **globaly-i18n**?
+
+Many i18n libraries are:
+
+* heavy
+* complex
+* tightly coupled to specific frameworks
+
+**globaly-i18n** focuses on:
+
+* ⚡ lightweight architecture
+* 🧩 framework-agnostic design
+* 🧠 TypeScript developer experience
+* 🚀 simple integration
+* 🔧 flexible usage for both frontend and backend
 
 ---
 
 # 🧪 Testing
 
-Run tests using:
+Run tests using
 
 ```bash
 npm test
 ```
 
-The project uses **Vitest** for testing.
+The project uses **Vitest**.
 
 ---
 
@@ -366,6 +486,6 @@ MIT License
 
 If you find this library useful:
 
-- ⭐ Star the repository
-- 📦 Share it with other developers
-- 🐛 Report issues or suggest improvements
+* ⭐ Star the repository
+* 📦 Share it with other developers
+* 🐛 Report issues or suggest improvements
